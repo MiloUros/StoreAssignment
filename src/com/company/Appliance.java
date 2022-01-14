@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 public class Appliance extends Products {
 
-    //VARIABLES OF TEH CLASS
+    //VARIABLES OF THE CLASS
     private final String model;
 
     //CONSTRUCTOR
