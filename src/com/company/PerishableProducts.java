@@ -4,30 +4,24 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
-public class Appliance extends Products {
+public class PerishableProducts extends Products{
 
-    private final String model;
-
-    public Appliance(String name, String brand, double price, String model, String productionDate, double weight) {
+    protected final LocalDate expirationDate;
+    public PerishableProducts(String name, String brand, double price, LocalDate expirationDate) {
         super(name, brand, price);
-        this.model = model;
+        this.expirationDate = expirationDate;
     }
-
-    public String getModel() {
-        return model;
-    }
-
-
 
     @Override
     public void print(LocalDateTime dateTime) {
         DecimalFormat formatDecimals = new DecimalFormat("0.00");
         formatDecimals.setRoundingMode(RoundingMode.HALF_UP);
 
-        System.out.println(getName() + " " + getBrand() + " " + getModel());
-        System.out.println((int)getNumOfProducts() + " x $" + getPrice() + " = $" +
-                formatDecimals.format(getNumOfProducts() * getPrice()));
+        System.out.println(getName() + " - " + getBrand() + "\n");
+        System.out.println(getNumOfProducts() + " x $" + getPrice() + " = $" +
+                formatDecimals.format(getNumOfProducts() * getPrice()) + "\n");
 
         if (discount(dateTime) != 0) {
             System.out.println("#discount " + (int) discount(dateTime) +  "% -$" +
@@ -36,16 +30,16 @@ public class Appliance extends Products {
         }
     }
 
-
     @Override
     public float discount(LocalDateTime dateOfPurchase) {
         LocalDate purchased = dateOfPurchase.toLocalDate();
-        String dayOfTheWeek = String.valueOf(purchased.getDayOfWeek());
-        if ((dayOfTheWeek.equals("SATURDAY") || dayOfTheWeek.equals("SUNDAY")) && getPrice() > 999) {
-            return 5;
+        long days = ChronoUnit.DAYS.between(this.expirationDate, dateOfPurchase);
+        if (this.expirationDate.compareTo(purchased) == 0) {
+            return 50;
+        } else if (days > 0 && days < 6) {
+            return 10;
         } else {
             return 0;
         }
     }
-
 }
